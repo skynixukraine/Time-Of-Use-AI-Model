@@ -7,9 +7,9 @@ An intelligent Python-based model for optimizing daily and monthly electricity u
 ## 🧠 Overview
 
 This model predicts and optimizes energy costs by combining:
-- Real-time **electricity pricing** (day & night rates)  
-- **Power consumption** data  
-- **Battery capacity** for storage systems  
+- Real-time **electricity pricing** (day & night rates)
+- **Power consumption** data
+- **Battery capacity** for storage systems
 - **Weather-based generation forecasts** (for solar or hybrid systems)
 
 It produces JSON-based analytical outputs and cost forecasts for both short-term and monthly usage scenarios.
@@ -23,24 +23,21 @@ power = 10            # Device power (kW)
 price_day = 4.6       # Daytime electricity rate
 price_night = 2.3     # Nighttime electricity rate
 capacity = 45         # Battery capacity (kWh)
-
-🧾 Example Output
-```{
-
-
-## 🔍 Example Parameters
-
-```python
-power = 10            # Device power (kW)
-price_day = 4.6       # Daytime electricity rate
-price_night = 2.3     # Nighttime electricity rate
-capacity = 45         # Battery capacity (kWh)
 ```
 
 ### 🧾 Example Output
 
+```json
+{
+  "optimized_usage_pattern": "Use stored energy from 19:00 to 07:00",
+  "total_day_cost": 120.75,
+  "total_night_cost": 68.25,
   "average_daily_cost": 6.3,
+  "monthly_savings_percent": 18.4
+}
+```
 
+---
 
 ## ⚙️ Installation
 
@@ -56,17 +53,22 @@ pip install -r requirements.txt
 
 ```bash
 python app.py
+```
+
 ---
 
 ## 🧪 Example API Request (for Postman or cURL)
 
-###Endpoint:
+### Endpoint
+
 ```
 POST http://localhost:8080/run
 Content-Type: application/json
----
-###Body (JSON)
 ```
+
+### Body (JSON)
+
+```json
 {
   "uid": "user123",
   "historical": [
@@ -83,6 +85,7 @@ Content-Type: application/json
       "soc": 60,
       "price": 4.32
     }
+    // ...
   ],
   "forecast": [
     {
@@ -93,17 +96,27 @@ Content-Type: application/json
       "soc": 55,
       "price": 4.32
     }
+    // ...
   ]
 }
----
+```
+
 💡 In a real use case:
-historical should contain at least several days (e.g., 14 × 24 = 336 records)
-forecast must include exactly 24 records (one per hour for the next day)
+- `historical` should contain at least several days (e.g., 14 × 24 = 336 records)
+- `forecast` must include exactly 24 records (one per hour for the next day)
+
+---
 
 ## 🧩 Tech Stack
 
----
+- Python 3.9+
+- Pandas — data processing
+- Matplotlib — visualization
+- Requests — API integration
+- Flask — REST API
+- Numpy, scikit-learn, joblib — ML logic
 
+---
 
 **Skynix Team**  
 [https://skynix.co/about-skynix](https://skynix.co/about-skynix)
@@ -116,4 +129,5 @@ A professional software development company specializing in advanced AI automati
 
 This project is **NOT open source**.  
 Any use, copying, distribution, or modification of this code is **prohibited without explicit written permission from Skynix Team**.
+
 © Skynix Team. All rights reserved.
