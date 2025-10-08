@@ -26,13 +26,7 @@ capacity = 45         # Battery capacity (kWh)
 
 🧾 Example Output
 ```{
-  "optimized_usage_pattern": "Use stored energy from 19:00 to 07:00",
-  "total_day_cost": 120.75,
-  "total_night_cost": 68.25,
-  "average_daily_cost": 6.3,
-  "monthly_savings_percent": 18.4
-}
----
+
 
 ## 🔍 Example Parameters
 
@@ -45,17 +39,8 @@ capacity = 45         # Battery capacity (kWh)
 
 ### 🧾 Example Output
 
-```json
-{
-  "optimized_usage_pattern": "Use stored energy from 19:00 to 07:00",
-  "total_day_cost": 120.75,
-  "total_night_cost": 68.25,
   "average_daily_cost": 6.3,
-  "monthly_savings_percent": 18.4
-}
-```
 
----
 
 ## ⚙️ Installation
 
@@ -71,31 +56,54 @@ pip install -r requirements.txt
 
 ```bash
 python app.py
+---
+
+## 🧪 Example API Request (for Postman or cURL)
+
+###Endpoint:
 ```
-
+POST http://localhost:8080/run
+Content-Type: application/json
 ---
-
-## 📊 Visualization
-
-The model can display:
-
-- Hourly and daily consumption charts
-- Cost optimization trends
-- Battery charge/discharge simulation
-
+###Body (JSON)
+```
+{
+  "uid": "user123",
+  "historical": [
+    {
+      "month": 10,
+      "day": 6,
+      "hour": 14,
+      "clouds": 35,
+      "power": 10,
+      "generation": 7.5,
+      "consumption": 4.2,
+      "purchase": 0.0,
+      "battery_capacity": 45,
+      "soc": 60,
+      "price": 4.32
+    }
+  ],
+  "forecast": [
+    {
+      "month": 10,
+      "day": 7,
+      "hour": 8,
+      "clouds": 25,
+      "soc": 55,
+      "price": 4.32
+    }
+  ]
+}
 ---
+💡 In a real use case:
+historical should contain at least several days (e.g., 14 × 24 = 336 records)
+forecast must include exactly 24 records (one per hour for the next day)
 
 ## 🧩 Tech Stack
 
-- Python 3.9+
-- Pandas — data processing
-- Matplotlib — visualization
-- Requests — API integration
-- AI-assisted logic for optimization
-
 ---
 
-## 🧑‍💻 Developed by
 
 **Skynix Team**  
 [https://skynix.co/about-skynix](https://skynix.co/about-skynix)
@@ -108,5 +116,4 @@ A professional software development company specializing in advanced AI automati
 
 This project is **NOT open source**.  
 Any use, copying, distribution, or modification of this code is **prohibited without explicit written permission from Skynix Team**.
-
 © Skynix Team. All rights reserved.
