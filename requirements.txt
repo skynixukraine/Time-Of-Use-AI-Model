@@ -1,7 +1,6 @@
-requests
-pandas
-matplotlib
 flask
 numpy
+pandas
 scikit-learn
-joblib
+torch
+pulp
