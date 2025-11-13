@@ -1,7 +1,6 @@
-requests
-pandas
-matplotlib
 flask
 numpy
+pandas
 scikit-learn
-joblib
+pulp
+# torch is optional for accelerated training; install separately when available
