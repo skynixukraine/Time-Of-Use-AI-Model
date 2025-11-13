@@ -1,2 +1,6 @@
 # Ignore user models directory
 user_models/
+
+# Python bytecode caches
+__pycache__/
+*.py[cod]
