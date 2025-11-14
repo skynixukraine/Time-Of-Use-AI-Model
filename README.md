@@ -61,17 +61,23 @@ The API is served at `http://0.0.0.0:8000` (or `http://127.0.0.1:8000` locally) 
 
 ---
 
-## 🔌 REST API Endpoints
+## 🧪 Example API Requests (for Postman or cURL)
 
-### `POST /train`
+### Train (`POST /train`)
 
-Train (or retrain) the forecasting and SOC models for a particular user.
+Endpoint
 
-**Request body**
+```http
+POST http://localhost:8000/train
+Content-Type: application/json
+```
+
+Body (JSON)
 
 ```jsonc
 {
   "uid": "user123",            // Unique user identifier (required)
+  "train_window_days": 14,      // optional: truncate history to the last N days
   "historical": [               // Time-ordered hourly history (required)
     {
       "month": 10,
@@ -88,14 +94,13 @@ Train (or retrain) the forecasting and SOC models for a particular user.
       "irradiance": 320.0       // optional (default 0.0)
     }
     // ... more records ...
-  ],
-  "train_window_days": 14       // optional: truncate history to the last N days
+  ]
 }
 ```
 
-> ℹ️ Provide at least 48 hourly records so the model can assemble one training sequence (24 for context + 24 for prediction).
+ℹ️ Provide at least 48 hourly records so the model can assemble one training sequence (24 for context + 24 for prediction).
 
-**Successful response**
+Response (JSON)
 
 ```json
 {
@@ -118,30 +123,20 @@ Validation errors return `{ "error": "message" }` with HTTP status `400`; unexpe
 
 ---
 
-### `POST /predict`
+### Predict (`POST /predict`)
 
-Generate the next-day energy strategy for a previously trained user.
+Endpoint
 
-**Request body**
+```http
+POST http://localhost:8000/predict
+Content-Type: application/json
+```
+
+Body (JSON)
 
 ```jsonc
 {
   "uid": "user123",               // required
-  "forecast_24h": [               // list of 24+ hourly forecast records (required)
-    {
-      "month": 10,
-      "day": 7,
-      "hour": 8,
-      "clouds": 25,
-      "temperature": 9.4,
-      "irradiance": 240.0,
-      "generation": 6.1,         // optional (defaults to 0.0)
-      "consumption": 3.8,        // optional (defaults to 0.0)
-      "price": 4.32,             // optional (defaults to 0.0)
-      "power": 10.0              // optional (falls back to request-level power)
-    }
-    // ... 23 more entries ...
-  ],
   "soc_current": 58.0,            // optional: current battery SOC (%). Defaults to 0 or current.soc
   "power": 10.0,                  // optional: max charge/discharge power (kW)
   "battery_capacity": 45.0,       // optional: battery capacity (kWh)
@@ -156,11 +151,26 @@ Generate the next-day energy strategy for a previously trained user.
     "battery_capacity": 45.0,
     "soc": 58.0,
     "price": 4.18
-  }
+  },
+  "forecast_24h": [               // list of 24+ hourly forecast records (required)
+    {
+      "month": 10,
+      "day": 7,
+      "hour": 8,
+      "clouds": 25,
+      "temperature": 9.4,
+      "irradiance": 240.0,
+      "generation": 6.1,         // optional (defaults to 0.0)
+      "consumption": 3.8,        // optional (defaults to 0.0)
+      "price": 4.32,             // optional (defaults to 0.0)
+      "power": 10.0              // optional (falls back to request-level power)
+    }
+    // ... 23 more entries ...
+  ]
 }
 ```
 
-**Successful response**
+Response (JSON)
 
 ```json
 {
