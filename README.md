@@ -57,7 +57,7 @@ Start the FastAPI service with Uvicorn:
 uvicorn predict:app --app-dir /workspace --host 0.0.0.0 --port 8000 --workers 2
 ```
 
-The API is served at `http://0.0.0.0:8000` (or `http://127.0.0.1:8000` locally) and exposes two JSON endpoints: `/train` and `/predict`.
+The API is exposed at `http://0.0.0.0:8000` (or `http://127.0.0.1:8000` locally) and provides two JSON endpoints: `/train` and `/predict`.
 
 ---
 
@@ -76,9 +76,9 @@ Body (JSON)
 
 ```jsonc
 {
-  "uid": "user123",            // Unique user identifier (required)
+  "uid": "user123",            // unique user identifier (required)
   "train_window_days": 14,      // optional: truncate history to the last N days
-  "historical": [               // Time-ordered hourly history (required)
+  "historical": [               // ordered hourly history (required)
     {
       "month": 10,
       "day": 6,
@@ -90,8 +90,8 @@ Body (JSON)
       "battery_capacity": 45.0,
       "soc": 60.0,
       "price": 4.32,
-      "temperature": 12.3,      // optional (default 0.0)
-      "irradiance": 320.0       // optional (default 0.0)
+      "temperature": 12.3,      // optional (defaults to 0.0)
+      "irradiance": 320.0       // optional (defaults to 0.0)
     }
     // ... more records ...
   ]
@@ -137,10 +137,10 @@ Body (JSON)
 ```jsonc
 {
   "uid": "user123",               // required
-  "soc_current": 58.0,            // optional: current battery SOC (%). Defaults to 0 or current.soc
+  "soc_current": 58.0,            // optional: current battery SOC (%); defaults to 0 or current.soc
   "power": 10.0,                  // optional: max charge/discharge power (kW)
   "battery_capacity": 45.0,       // optional: battery capacity (kWh)
-  "current": {                    // optional: latest measured point, used as fallback for missing values
+  "current": {                    // optional: latest measurement used as a fallback
     "month": 10,
     "day": 6,
     "hour": 23,
@@ -217,7 +217,7 @@ A professional software development company specializing in advanced AI automati
 
 ## 📜 License
 
-This project is **NOT open source**.  
+This project is **NOT open source**.
 Any use, copying, distribution, or modification of this code is **prohibited without explicit written permission from Skynix Team**.
 
 © Skynix Team. All rights reserved.
