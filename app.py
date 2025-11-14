@@ -4,7 +4,7 @@ TOU LSTM Forecaster + SOC Controller service.
 - Dataset builder from historical JSON
 - LP label generator (PuLP)
 - Training loops with TensorBoard logging
-- Flask endpoints: /train and /predict
+- FastAPI endpoints: /train and /predict
 - Per-user model structure under user_models/{uid}/
 
 Developed by Skynix Team — https://skynix.co/about-skynix
@@ -26,7 +26,7 @@ try:
 except ImportError:  # pragma: no cover - executed when PuLP is unavailable
     pulp = None
     PULP_AVAILABLE = False
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException
 import shutil
 
 try:
@@ -1072,45 +1072,52 @@ def predict_for_uid(uid, forecast_24h, soc_current, power, capacity):
     }
 
 # ---------------------------
-# Flask
+# FastAPI application
 # ---------------------------
-app = Flask(__name__)
+app = FastAPI(title="TOU Service")
 
-@app.route("/train", methods=["POST"])
-def train_endpoint():
-    data = request.get_json() or {}
+
+@app.post("/train")
+async def train_endpoint(data: Dict[str, Any]):
     if not isinstance(data, dict):
-        return jsonify({"error": "invalid JSON payload"}), 400
-    uid = data.get("uid"); hist = data.get("historical")
+        raise HTTPException(status_code=400, detail="invalid JSON payload")
+
+    uid = data.get("uid")
+    hist = data.get("historical")
     if not uid or not hist:
-        return jsonify({"error": "uid and historical required"}), 400
-    try:
-        result = full_train_pipeline(uid, hist)
-        return jsonify(result)
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=400, detail="uid and historical required")
 
-@app.route("/predict", methods=["POST"])
-def predict_endpoint():
-    data = request.get_json() or {}
+    try:
+        return full_train_pipeline(uid, hist)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/predict")
+async def predict_endpoint(data: Dict[str, Any]):
     if not isinstance(data, dict):
-        return jsonify({"error": "invalid JSON payload"}), 400
+        raise HTTPException(status_code=400, detail="invalid JSON payload")
+
     uid = data.get("uid")
     if not uid:
-        return jsonify({"error": "uid is required"}), 400
+        raise HTTPException(status_code=400, detail="uid is required")
+
     try:
         forecast, soc, power, cap = resolve_prediction_payload(data)
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        raise HTTPException(status_code=400, detail=str(e))
+
     try:
-        return jsonify(predict_for_uid(uid, forecast, soc, power, cap))
+        return predict_for_uid(uid, forecast, soc, power, cap)
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
-    print("Starting TOU service on http://127.0.0.1:5001")
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    import uvicorn
+
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, workers=2)
